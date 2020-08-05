@@ -2,8 +2,8 @@ import { Machine, interpret } from 'xstate';
 
 // State machines
 import drawerService from './drawer.js';
-import { home, views } from './views.js';
-import { fixtures } from './fixture.js';
+import { fixtures } from './fixtures.js';
+import { loadBlock, loadGallery, loadHome, loadList, views } from './views.js';
 
 const stateMachineDefinition = Machine(
   {
@@ -16,7 +16,10 @@ const stateMachineDefinition = Machine(
   },
   {
     actions: {
-      home: home,
+      loadBlock,
+      loadGallery,
+      loadHome,
+      loadList,
     },
     services: {
       drawerService: drawerService,

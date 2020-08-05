@@ -5,6 +5,9 @@ const mode = process.env.NODE_ENV || 'development';
 const prod = mode === 'production';
 
 module.exports = {
+  devServer: {
+    historyApiFallback: true,
+  },
   entry: {
     bundle: ['./src/main.js'],
   },
@@ -16,9 +19,9 @@ module.exports = {
     mainFields: ['svelte', 'browser', 'module', 'main'],
   },
   output: {
-    path: __dirname + '/public',
-    filename: '[name].[hash].js',
-    chunkFilename: '[name].[hash].js',
+    path: prod ? path.resolve(__dirname, 'dist') : __dirname + '/public',
+    //chunkFilename: '[name].[id].js',
+    filename: prod ? '[name].[contenthash].js' : '[name].js',
   },
   module: {
     rules: [
@@ -46,10 +49,33 @@ module.exports = {
     ],
   },
   mode,
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: '[name].[hash].css',
-    }),
-  ],
+  plugins: prod
+    ? [
+        new MiniCssExtractPlugin({
+          filename: '[name].[contenthash].css',
+        }),
+      ]
+    : [
+        new MiniCssExtractPlugin({
+          filename: '[name].css',
+        }),
+      ],
+
   devtool: prod ? false : 'source-map',
+
+  optimization: prod
+    ? {
+        moduleIds: 'hashed',
+        runtimeChunk: 'single',
+        splitChunks: {
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+            },
+          },
+        },
+      }
+    : {},
 };

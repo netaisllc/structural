@@ -9,7 +9,7 @@ export default Machine(
       starting: {
         entry: ['activated'],
         after: {
-          10: 'closed',
+          10: 'open',
         },
       },
       closed: {
@@ -36,7 +36,7 @@ export default Machine(
       },
       closed: (context, event) => {
         drawer.set('closed');
-        // First transition doesn't carry the STM
+        // Guard: no stm
         event.stm
           ? event.stm.send({
               type: 'DRAWER_CLOSE',
@@ -48,10 +48,13 @@ export default Machine(
       },
       open: (context, event) => {
         drawer.set('open');
-        event.stm.send({
-          type: 'DRAWER_OPEN',
-          stm: event.stm,
-        });
+        // Guard: no stm
+        event.stm
+          ? event.stm.send({
+              type: 'DRAWER_OPEN',
+              stm: event.stm,
+            })
+          : null;
 
         console.log('-> Drawer is open.');
       },
