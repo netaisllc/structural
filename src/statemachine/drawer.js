@@ -1,17 +1,12 @@
 import { Machine } from 'xstate';
 import { drawer } from '../store/stores';
+import { stateMachine } from '../statemachine/app';
 
 export default Machine(
   {
     id: 'Drawer',
-    initial: 'starting',
+    initial: 'open',
     states: {
-      starting: {
-        entry: ['activated'],
-        after: {
-          10: 'open',
-        },
-      },
       closed: {
         entry: ['closed'],
         on: {
@@ -31,32 +26,13 @@ export default Machine(
   },
   {
     actions: {
-      activated: (context, event) => {
-        console.log('-> Activated: Drawer service.');
-      },
       closed: (context, event) => {
         drawer.set('closed');
-        // Guard: no stm
-        event.stm
-          ? event.stm.send({
-              type: 'DRAWER_CLOSE',
-              stm: event.stm,
-            })
-          : null;
-
-        console.log('-> Drawer is closed.');
+        stateMachine.send({ type: 'DRAWER_CLOSE' });
       },
       open: (context, event) => {
         drawer.set('open');
-        // Guard: no stm
-        event.stm
-          ? event.stm.send({
-              type: 'DRAWER_OPEN',
-              stm: event.stm,
-            })
-          : null;
-
-        console.log('-> Drawer is open.');
+        stateMachine.send({ type: 'DRAWER_OPEN' });
       },
     },
   },

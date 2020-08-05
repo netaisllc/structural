@@ -1,6 +1,6 @@
 <script>
-  import { getContext } from "svelte";
   import { page } from "../store/stores.js";
+  import { stateMachine } from "../statemachine/app";
 
   export let icon;
   export let name;
@@ -8,14 +8,8 @@
 
   $: selected = $page.name === view;
 
-  const stateMachine = getContext("stm");
-
   const emit = e => {
-    stateMachine.send(view.toUpperCase());
-    stateMachine.send({
-      type: "MENU_ACTION",
-      stm: stateMachine
-    });
+    stateMachine.send({ type: view.toUpperCase() });
   };
 </script>
 
