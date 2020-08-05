@@ -1,6 +1,5 @@
 import { Machine } from 'xstate';
-import { drawer } from '../store/stores';
-import { stateMachine } from '../statemachine/app';
+import { closed, open } from './actions';
 
 export default Machine(
   {
@@ -26,14 +25,8 @@ export default Machine(
   },
   {
     actions: {
-      closed: (context, event) => {
-        drawer.set('closed');
-        stateMachine.send({ type: 'DRAWER_CLOSE' });
-      },
-      open: (context, event) => {
-        drawer.set('open');
-        stateMachine.send({ type: 'DRAWER_OPEN' });
-      },
+      closed: closed,
+      open: open,
     },
   },
 );
